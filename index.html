@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integrated Carousel</title>
+    <link
+      rel="icon"
+      href="https://erp.maknon.org.sa/web/image?model=res.company&id=1&field=logo"
+      type="image/png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <style>
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        body {
+            background: #e6e6e6;
+            margin: 0;
+            font-family: "Droid Arabic Kufi", serif;
+            padding: 20px;
+        }
+        .button-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            display: flex;
+            cursor: pointer;
+            scrollbar-width: thin; /* For supported browsers, makes the scrollbar thinner */
+            scrollbar-color: darkgrey lightgrey; /* Optionally style the scrollbar (Firefox) */
+        }
+
+        /* For Webkit browsers like Chrome and Safari */
+        .button-container::-webkit-scrollbar {
+            height: 8px; /* height of the horizontal scrollbar */
+            /* Hide scrollbars */
+        }
+
+        .button-container::-webkit-scrollbar-track {
+            background: lightgrey; /* color of the tracking area */
+        }
+
+        .button-container::-webkit-scrollbar-thumb {
+            background-color: darkgrey; /* color of the scroll thumb */
+            border-radius: 10px; /* roundness of the scroll thumb */
+            border: 2px solid lightgrey; /* creates padding around scroll thumb */
+        }
+
+        #buttonContainer .occasionButton {
+            margin: 8px;
+            text-align: center;
+        }
+        .occasionButton {
+            color: #fff;
+            background-color: darkgreen;
+            border: 2px solid darkgreen;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+            margin: 10px; /* Space around buttons */
+            padding: 10px 20px; /* Button size (adjust as necessary) */
+            white-space: nowrap; /* Prevent text wrap */
+            flex-shrink: 0; /* Prevents shrinking */
+        }
+
+        .occasionButton:hover {
+            color: #ffcf86;
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
+
+        .occasionButton:focus {
+            color: #fff;
+            background-color: #277f66 !important;
+        }
+
+        .occasionButton:active {
+            color: #fff;
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
+        .occasionButton.active {
+            background-color: #277f66 !important;
+        }
+
+        .occasionButton:disabled {
+            color: #fff;
+            background-color: darkgreen;
+            border-color: darkgreen;
+            cursor: not-allowed;
+            opacity: 0.65;
+        }
+        @media (max-width: 768px) {
+            .occasionButton {
+                flex: 1 1 calc(50% - 10px);
+                padding: 10px 20px;
+                font-size: 14px;
+                margin: 10px;
+            }
+        }
+        @media (max-width: 576px) {
+            .occasionButton {
+                flex: 1 1 calc(100% - 10px);
+                padding: 8px 15px;
+                font-size: 12px;
+                margin: 10px;
+            }
+        }
+
+        .swiper-container {
+            /* width: 100%; */
+            overflow: hidden;
+            padding: 20px 0;
+            position: relative; /* Ensure the container is the reference point for absolute positioning */
+        }
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .swiper-slide img {
+            display: block;
+            max-width: 100%;
+            max-height: 80vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        .btn-primary {
+            background-color: #277f66;
+            border-color: #277f66;
+        }
+        .btn-primary:hover {
+            color: #ffcf86;
+            background-color: #277f66 !important;
+            border-color: #277f66 !important;
+        }
+        .btn-primary:active {
+            color: #ffcf86;
+            background-color: #277f66 !important;
+            border-color: #277f66 !important;
+        }
+        .swiper-pagination {
+            position: absolute;
+            bottom: 10px; /* to control the distance from the bottom */
+            left: 50%; /* center horizontally */
+            transform: translateY(50%); /* center horizontally */
+            width: auto;
+            text-align: center;
+            z-index: 10; /* ensure pagination is above other elements */
+        }
+
+        .image-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 7.5px solid transparent;
+            pointer-events: none;
+            transition: border-color 0.000001s ease-in-out;
+        }
+        .image-border.active {
+            border-color: darkgreen;
+        }
+        .swiper-pagination-bullet-active {
+            background-color: darkgreen !important;
+        }
+        .occasions {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        /* .btn {
+            margin: 0 5px;
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+        } */
+        
+        /* Style for the placeholder text */
+        #placeholder {
+            position: absolute;
+            top: 75%; /* 3/4 of the page */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="icon">
+        <img
+            src="https://erp.maknon.org.sa/web/image?model=res.company&id=1&field=logo"
+            style="max-width: 30%; width: 200px"
+        />
+    </div>
+    <div class="container text-center">
+        <div>
+            <h1 id="title">Loading...</h1>
+        </div>
+        <div class="button-container row justify-content-center">
+            <div id="buttonContainer"></div>
+        </div>
+        
+        <div class="row align-items-center justify-content-center">
+            <div class="swiper-container col-md-6 col-9">
+                <div class="swiper-wrapper"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <form action="/submit" method="post">
+            <input type="text" name="image_id" id="hiddenImgID" hidden="hidden"/>
+            <div class="notes-container row justify-content-center py-2">
+                <div class="notes col-md-12 col-9" data-value="note1"></div>
+            </div>
+
+            <div class="row py-2 justify-content-center">
+                <div class="col-md-5 col-9 nameInputField">
+                    <!-- Input field -->
+                    <input
+                        type="text"
+                        id="inputName"
+                        class="form-control text-center"
+                        aria-describedby="nameHelpInline"
+                        oninput="updatePlaceholder()"
+                    />
+                </div>
+            </div>
+            <div class="row py-2 justify-content-center">
+                <div class="form-group col-md-5 col-9 submitButton"></div>
+            </div>
+        </form>
+        <!-- Placeholder element for displaying input text -->
+        <div id="placeholder"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.js"></script>
+     <script>
+        const proxyUrl = 'https://cors.bridged.cc/';
+        const apiUrl = proxyUrl + "https://erp.maknon.org.sa/gcard/init";
+        var swiper;
+        function fetchData() {
+            try {
+                fetch(apiUrl)
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        console.log(data);
+                        generateButtons(data.occasions);
+                        generateImages(data.images);
+                        generateSubmitButton();
+                        // generateNotes(data.occasions);
+                    })
+                    .catch(function (error) {
+                        document.getElementById("title").innerText = "Error loading data";
+                    });
+            } catch (error) {
+                document.getElementById("title").innerText = "Error loading data";
+                console.error("Error fetching data:", error);
+            }
+        }
+        
+        window.onload = fetchData;
+
+        var lastImageId = null;
+        function generateImages(data) {
+            const swiperWrapper = document.querySelector(".swiper-wrapper");
+            swiperWrapper.innerHTML = "";
+            data.forEach((item) => {
+                const slide = document.createElement("div");
+                slide.className = "swiper-slide";
+                const img = document.createElement("img");
+                img.src = "data:image/jpeg;base64," + item.img;
+                img.alt = "Image";
+                img.dataset.id = item.id;
+                slide.appendChild(img);
+                swiperWrapper.appendChild(slide);
+            });
+            if (swiper) swiper.destroy(true, true);
+            swiper = new Swiper(".swiper-container", {
+                loop: true,
+                slidesPerView: "auto",
+                spaceBetween: 30,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+                scrollbar: {
+                    el: ".swiper-scrollbar",
+                },
+            });
+
+            // Log the default active image ID after initialization
+            const activeImg = swiper.slides[swiper.activeIndex].querySelector("img");
+            if (activeImg) {
+                console.log("Default Image ID: " + activeImg.dataset.id);
+                document.getElementById("hiddenImgID").value = activeImg.dataset.id;
+            }
+
+            swiper.on("slideChangeTransitionEnd", function () {
+                const activeImg = swiper.slides[swiper.activeIndex].querySelector("img");
+                const imgID = document.getElementById("hiddenImgID");
+
+                const currentImageId = activeImg.dataset.id;
+
+                if (currentImageId !== lastImageId) {
+                    console.log("Image ID: " + currentImageId);
+                    lastImageId = currentImageId;
+
+                    imgID.value = lastImageId;
+                    console.log("Value: " + imgID.value);
+                }
+            });
+        }
+        
+        function generateButtons(occasions) {
+            const buttonContainer = document.getElementById("buttonContainer");
+            buttonContainer.innerHTML = "";
+            occasions.forEach((occasion) => {
+                const button = document.createElement("button");
+                button.className = "btn btn-primary occasionButton";
+                button.textContent = occasion.name;
+                button.dataset.id = occasion.id;
+                button.addEventListener("click", function () {
+                    const url = `${proxyUrl}https://erp.maknon.org.sa/gcard/init?occasions=${this.dataset.id}`;
+                    console.log("Attempting to send data to:", url);
+                    fetch(url, {
+                        method: "GET",
+                        headers: {},
+                    })
+                        .then((response) => {
+                            console.log("Raw response:", response);
+                            if (!response.ok) {
+                                throw new Error("Network response was not ok");
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            console.log("Response data:", data);
+                            generateImages(data.images);
+                            // Generate notes for the selected occasion
+                            if (data.images && data.images.length > 0) {
+                                const selectedOccasion = occasions.find(o => o.id == occasion.id);
+                                generateNotes(selectedOccasion.note_ids);
+                            } else {
+                                // Clear notes if no images
+                                clearNotes();
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error sending data:", error);
+                        });
+                });
+                buttonContainer.appendChild(button);
+            });
+        }
+
+        function generateNotes(note_ids) {
+            const noteSwiper = document.querySelector(".notes");
+            noteSwiper.innerHTML = ""; // Clear existing notes if any
+
+            note_ids.forEach((note) => {
+                // Create the radio button input
+                const radioInput = document.createElement("input");
+                radioInput.type = "radio";
+                radioInput.className = "btn-check";
+                radioInput.id = "note-" + note.id; // Ensure unique IDs
+                radioInput.name = "noteOptions"; // Same name groups them into a radio button set
+                radioInput.value = note.id;
+                radioInput.autocomplete = "off";
+
+                // Create the label for the radio button
+                const label = document.createElement("label");
+                label.className = "btn btn-outline-success mx-3 my-3";
+                label.htmlFor = radioInput.id; // Ensures clicking label toggles the input
+                label.textContent = note.name;
+                label.dataset.id = note.id;
+
+                // Add event listener for selection, if needed
+                label.addEventListener("click", () => {
+                    document
+                      .querySelectorAll(".notes .btn")
+                      .forEach((btn) => btn.classList.remove("selected"));
+                    label.classList.add("selected");
+                });
+
+                label.onclick = function () {
+                    document.querySelectorAll(".notes-container .notes");
+                    console.log("Selected Note ID:", this.dataset.id);
+                };
+
+                // Append the input and label to the container
+                noteSwiper.appendChild(radioInput);
+                noteSwiper.appendChild(label);
+            });
+        }
+
+        function clearNotes() {
+            const noteSwiper = document.querySelector(".notes");
+            noteSwiper.innerHTML = ""; // Clear existing notes if any
+        }
+        
+        function generateSubmitButton() {
+            const nameInput = document.querySelector(".nameInputField");
+            nameInput.innerHTML = "";
+            const inputField = document.createElement("input");
+            inputField.type = "text";
+            inputField.id = "inputName";
+            inputField.name = "name";
+            inputField.className = "form-control text-center";
+            inputField.ariaDescription = "nameHelpInline";
+
+            const subBtn = document.querySelector(".submitButton");
+            subBtn.innerHTML = "";
+            const subBtnCreate = document.createElement("button"); // <button class="btn btn-primary" type="submit">Submit form</button>
+            subBtnCreate.className = "form-control btn btn-primary btn-lg col";
+            subBtnCreate.type = "submit";
+            subBtnCreate.value = "Submit";
+            subBtnCreate.textContent = "أنشئ بطاقتك";
+
+            nameInput.appendChild(inputField);
+            subBtn.append(subBtnCreate);
+        }
+
+        document.querySelectorAll(".notes-selection .notes").forEach((note) => {
+            note.addEventListener("click", function () {
+                document
+                  .querySelectorAll(".notes-selection .note")
+                  .forEach((note) => note.classList.remove("selected"));
+                this.classList.add("selected");
+                document.getElementById("selectedNote").value =
+                  this.getAttribute("data-value");
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const buttons = document.querySelectorAll(".occasionButton");
+
+            buttons.forEach((button) => {
+                button.addEventListener("click", function () {
+                    // Remove active class from all buttons
+                    buttons.forEach((btn) => btn.classList.remove("active"));
+
+                    // Add active class to the clicked button
+                    this.classList.add("active");
+                });
+            });
+        });
+
+        // Function to update the placeholder text
+        function updatePlaceholder() {
+            const inputField = document.getElementById("inputName");
+            const placeholder = document.getElementById("placeholder");
+            placeholder.textContent = inputField.value;
+        }
+    </script>
+
+
+</body>
+</html>
