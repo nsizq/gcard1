@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Integrated Carousel</title>
@@ -24,233 +24,283 @@
       href="https://unpkg.com/swiper/swiper-bundle.min.css"
     />
     <style>
-        .icon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        body {
-            background: #e6e6e6;
-            margin: 0;
-            font-family: "Droid Arabic Kufi", serif;
-            padding: 20px;
-        }
-        .button-container {
-            overflow-x: auto;
-            white-space: nowrap;
-            display: flex;
-            cursor: pointer;
-            scrollbar-width: thin; /* For supported browsers, makes the scrollbar thinner */
-            scrollbar-color: darkgrey lightgrey; /* Optionally style the scrollbar (Firefox) */
-        }
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      body {
+        background: #e6e6e6;
+        margin: 0;
+        font-family: "Droid Arabic Kufi", serif;
+        padding: 20px;
+      }
 
-        /* For Webkit browsers like Chrome and Safari */
-        .button-container::-webkit-scrollbar {
-            height: 8px; /* height of the horizontal scrollbar */
-            /* Hide scrollbars */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #e6e6e6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+      
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .spinner_6kVp {
+        transform-origin: center;
+        animation: spinner_irSm .75s infinite linear;
+      }
+      
+      @keyframes spinner_irSm {
+        100% {
+          transform: rotate(360deg);
         }
+      }
+      
+      .blur {
+        filter: blur(1px); /* Adjusted for slight blur effect */
+      }
+      .button-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        display: flex;
+        cursor: pointer;
+        scrollbar-width: thin;
+        scrollbar-color: darkgrey lightgrey; 
+      }
 
-        .button-container::-webkit-scrollbar-track {
-            background: lightgrey; /* color of the tracking area */
-        }
+      /* For Webkit browsers like Chrome and Safari */
+      .button-container::-webkit-scrollbar {
+        height: 8px;
+      }
 
-        .button-container::-webkit-scrollbar-thumb {
-            background-color: darkgrey; /* color of the scroll thumb */
-            border-radius: 10px; /* roundness of the scroll thumb */
-            border: 2px solid lightgrey; /* creates padding around scroll thumb */
-        }
+      .button-container::-webkit-scrollbar-track {
+        background: lightgrey;
+      }
 
-        #buttonContainer .occasionButton {
-            margin: 8px;
-            text-align: center;
-        }
-        .occasionButton {
-            color: #fff;
-            background-color: darkgreen;
-            border: 2px solid darkgreen;
-            text-align: center;
-            cursor: pointer;
-            outline: none;
-            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            margin: 10px; /* Space around buttons */
-            padding: 10px 20px; /* Button size (adjust as necessary) */
-            white-space: nowrap; /* Prevent text wrap */
-            flex-shrink: 0; /* Prevents shrinking */
-        }
+      .button-container::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        border-radius: 10px; /* roundness للسكرول */
+        border: 2px solid lightgrey; 
+      }
 
-        .occasionButton:hover {
-            color: #ffcf86;
-            background-color: darkgreen;
-            border-color: darkgreen;
-        }
+      #buttonContainer .occasionButton {
+        margin: 8px;
+        text-align: center;
+      }
+      .btn-primary {
+        background-color: #277f66 !important;
+        border: 2px solid #277f66;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        margin: 10px;
+        white-space: nowrap; /* منع text wrap */
+        flex-shrink: 0; /* منع التقلص */
+      }
 
-        .occasionButton:focus {
-            color: #fff;
-            background-color: #277f66 !important;
-        }
+      .btn-outline-primary {
+        color: #277f66;
+        border-color: #277f66;
+      }
 
-        .occasionButton:active {
-            color: #fff;
-            background-color: darkgreen;
-            border-color: darkgreen;
-        }
-        .occasionButton.active {
-            background-color: #277f66 !important;
-        }
+      .btn-outline-primary:hover {
+        color: #ffcf86 !important;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
 
-        .occasionButton:disabled {
-            color: #fff;
-            background-color: darkgreen;
-            border-color: darkgreen;
-            cursor: not-allowed;
-            opacity: 0.65;
-        }
-        @media (max-width: 768px) {
-            .occasionButton {
-                flex: 1 1 calc(50% - 10px);
-                padding: 10px 20px;
-                font-size: 14px;
-                margin: 10px;
-            }
-        }
-        @media (max-width: 576px) {
-            .occasionButton {
-                flex: 1 1 calc(100% - 10px);
-                padding: 8px 15px;
-                font-size: 12px;
-                margin: 10px;
-            }
-        }
+      .btn-outline-primary:focus {
+        color: #ffcf86 !important;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
 
-        .swiper-container {
-            /* width: 100%; */
-            overflow: hidden;
-            padding: 20px 0;
-            position: relative; /* Ensure the container is the reference point for absolute positioning */
-        }
-        .swiper-slide {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .swiper-slide img {
-            display: block;
-            max-width: 100%;
-            max-height: 80vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        }
-        .btn-primary {
-            background-color: #277f66;
-            border-color: #277f66;
-        }
-        .btn-primary:hover {
-            color: #ffcf86;
-            background-color: #277f66 !important;
-            border-color: #277f66 !important;
-        }
-        .btn-primary:active {
-            color: #ffcf86;
-            background-color: #277f66 !important;
-            border-color: #277f66 !important;
-        }
-        .swiper-pagination {
-            position: absolute;
-            bottom: 10px; /* to control the distance from the bottom */
-            left: 50%; /* center horizontally */
-            transform: translateY(50%); /* center horizontally */
-            width: auto;
-            text-align: center;
-            z-index: 10; /* ensure pagination is above other elements */
-        }
+      .btn-outline-primary:active {
+        color: #ffcf86 !important;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
 
-        .image-border {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 7.5px solid transparent;
-            pointer-events: none;
-            transition: border-color 0.000001s ease-in-out;
-        }
-        .image-border.active {
-            border-color: darkgreen;
-        }
-        .swiper-pagination-bullet-active {
-            background-color: darkgreen !important;
-        }
-        .occasions {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        /* .btn {
-            margin: 0 5px;
-            flex: 0 0 auto;
-            scroll-snap-align: start;
-        } */
+      .btn-outline-primary.active {
+        color: #ffcf86 !important;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+      
+
+      .btn-primary:hover {
+        color: #ffcf86 !important;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+
+      .btn-primary:focus {
+        color: #fff;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+
+      .btn-primary:active {
+        color: #fff;
+        background-color: #277f66;
+        border-color: #277f66;
+      }
+      .btn-primary.active {
+        color: #fff;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+
+      .btn-primary:disabled {
+        color: #fff;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
+      .occasionButton {
+        /* color: #fff; */
+        /* background-color: darkgreen;
+        border: 2px solid darkgreen; */
         
-        /* Style for the placeholder text */
-        #placeholder {
-            position: absolute;
-            top: 75%; /* 3/4 of the page */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            text-align: center;
-            color: #333;
-        }
+      }
+
+      .swiper-container {
+        overflow: hidden;
+        padding: 20px 0;
+        position: relative;
+      }
+      .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .swiper-slide img {
+        display: block;
+        max-width: 100%;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .btn-primary:hover {
+        color: #ffcf86;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+      .btn-primary:active {
+        color: #ffcf86;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+      .swiper-pagination {
+        position: absolute;
+        bottom: 10px;
+        left: 50%; /* وضعها وسط افقيا */
+        transform: translateY(50%); /* وضعها وسط افقيا */
+        width: auto;
+        text-align: center;
+        z-index: 10; /* نقاط الترقيم فوق العناصر الاخرى */
+      }
+
+      .image-border {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 7.5px solid transparent;
+        pointer-events: none;
+        transition: border-color 0.000001s ease-in-out;
+      }
+      .image-border.active {
+        border-color: darkgreen;
+      }
+      .swiper-pagination-bullet-active {
+        background-color: darkgreen !important;
+      }
+      .occasions {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .btn-success {
+        background-color: #277f66 !important;
+        border-color: #277f66;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        white-space: nowrap; /* منع text wrap */
+        flex-shrink: 0; /* منع التقلص */
+        --bs-btn-border-width: 0;
+      }
+
+      .btn-success:hover {
+        color: #ffcf86;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+      .btn-success:active {
+        color: #ffcf86;
+        background-color: #277f66 !important;
+        border-color: #277f66 !important;
+      }
+
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="icon">
-        <img
-            src="https://erp.maknon.org.sa/web/image?model=res.company&id=1&field=logo"
-            style="max-width: 30%; width: 200px"
-        />
+      <img
+        src="https://erp.maknon.org.sa/web/image?model=res.company&id=1&field=logo"
+        style="max-width: 30%; width: 200px"
+      />
     </div>
     <div class="container text-center">
-        <div>
-            <h1 id="title">Loading...</h1>
+      <div class="loading-overlay hidden" id="loadingOverlay">
+        <svg width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <style>.spinner_6kVp{transform-origin:center;animation:spinner_irSm .75s infinite linear}@keyframes spinner_irSm{100%{transform:rotate(360deg)}}</style>
+          <path d="M10.72,19.9a8,8,0,0,1-6.5-9.79A7.77,7.77,0,0,1,10.4,4.16a8,8,0,0,1,9.49,6.52A1.54,1.54,0,0,0,21.38,12h.13a1.37,1.37,0,0,0,1.38-1.54,11,11,0,1,0-12.7,12.39A1.54,1.54,0,0,0,12,21.34h0A1.47,1.47,0,0,0,10.72,19.9Z" class="spinner_6kVp"/>
+        </svg>
+        <h1 id="title"></h1>
+      </div>
+      <div class="button-container row justify-content-center">
+        <div id="buttonContainer"></div>
+      </div>
+      
+      <div class="row align-items-center justify-content-center">
+        <div class="swiper-container col-md-6 col-9">
+          <div class="swiper-wrapper"></div>
+          <div class="swiper-pagination"></div>
         </div>
-        <div class="button-container row justify-content-center">
-            <div id="buttonContainer"></div>
-        </div>
-        
-        <div class="row align-items-center justify-content-center">
-            <div class="swiper-container col-md-6 col-9">
-                <div class="swiper-wrapper"></div>
-                <div class="swiper-pagination"></div>
-            </div>
-        </div>
-        <form action="/submit" method="post">
-            <input type="text" name="image_id" id="hiddenImgID" hidden="hidden"/>
-            <div class="notes-container row justify-content-center py-2">
-                <div class="notes col-md-12 col-9" data-value="note1"></div>
-            </div>
+      </div>
+      <form action="/" method="post">
+        <input type="text" name="image_id" id="hiddenImgID" hidden="hidden"/>
+      <div class="notes-container row justify-content-center py-2">
+        <div class="notes col-md-12 col-9" data-value="note1"></div>
+      </div>
 
-            <div class="row py-2 justify-content-center">
-                <div class="col-md-5 col-9 nameInputField">
-                    <!-- Input field -->
-                    <input
-                        type="text"
-                        id="inputName"
-                        class="form-control text-center"
-                        aria-describedby="nameHelpInline"
-                        oninput="updatePlaceholder()"
-                    />
-                </div>
-            </div>
-            <div class="row py-2 justify-content-center">
-                <div class="form-group col-md-5 col-9 submitButton"></div>
-            </div>
-        </form>
-        <!-- Placeholder element for displaying input text -->
-        <div id="placeholder"></div>
+      <div class="row py-2 justify-content-center">
+        <div class="col-md-5 col-9 nameInputField">
+        </div>
+      </div>
+      <div class="row py-2 justify-content-center">
+        <div class="form-group col-md-5 col-9 submitButton"></div>
+      </div>
     </div>
-
+  </form>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script
@@ -263,180 +313,202 @@
         const proxyUrl = 'https://cors.bridged.cc/';
         const apiUrl = proxyUrl + "https://erp.maknon.org.sa/gcard/init";
         var swiper;
+      function fetchData() {
+        try {
+          // تفعيل سبينر حتى تتحمل المعلومات بشكل صحيح
+          document.getElementById("loadingOverlay").classList.remove("hidden");
+          document.body.classList.add("blur");
 
-        function fetchData() {
-            console.log("Fetching data from API…”);
-try {
-fetch(apiUrl)
-.then(function (response) {
-if (!response.ok) {
-throw new Error(“Network response was not ok”);
-}
-return response.json();
-})
-.then(function (data) {
-console.log(“Data fetched successfully:”, data);
-generateButtons(data.occasions);
-generateImages(data.images);
-generateSubmitButton();
-// generateNotes(data.occasions);
-})
-.catch(function (error) {
-console.error(“Error fetching data:”, error);
-document.getElementById(“title”).innerText = “Error loading data”;
-});
-} catch (error) {
-console.error(“Error in fetchData try-catch block:”, error);
-document.getElementById(“title”).innerText = “Error loading data”;
-}
-}
+          fetch(apiUrl)
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json();
+            })
+            .then(function (data) {
+              generateButtons(data.occasions);
+              generateImages(data.images);
+              generateSubmitButton();
+              // generateNotes(data.occasions);
+            })
+            .catch(function (error) {
+              document.getElementById("title").innerText = "Error loading data";
+            })
+            .finally(function () {
+              
+              // اخفاء السبينر بعد نجاح تحميل المعلومات
+              document.getElementById("loadingOverlay").classList.add("hidden");
+              document.body.classList.remove("blur");
+            });
+        } catch (error) {
+          document.getElementById("title").innerText = "Error loading data";
 
-    window.onload = fetchData;
-
-    var lastImageId = null;
-    function generateImages(data) {
-        console.log("Generating images...");
+          // اخفاء السبينر بعد نجاح تحميل المعلومات
+          document.getElementById("loadingOverlay").classList.add("hidden");
+          document.body.classList.remove("blur");
+        }
+      }
+      
+      window.onload = fetchData;
+      var lastImageId = null;
+      function generateImages(data) {
         const swiperWrapper = document.querySelector(".swiper-wrapper");
         swiperWrapper.innerHTML = "";
         data.forEach((item) => {
-            const slide = document.createElement("div");
-            slide.className = "swiper-slide";
-            const img = document.createElement("img");
-            img.src = "data:image/jpeg;base64," + item.img;
-            img.alt = "Image";
-            img.dataset.id = item.id;
-            slide.appendChild(img);
-            swiperWrapper.appendChild(slide);
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          const img = document.createElement("img");
+          img.src = "data:image/jpeg;base64," + item.img;
+          img.alt = "Image";
+          img.dataset.id = item.id;
+          slide.appendChild(img);
+          swiperWrapper.appendChild(slide);
         });
-        if (swiper) swiper.destroy(true, true);
+        if (swiper) swiper.destroy(true, true); // ضمان نقاط الترقيم حتى بعد وجود ايرور
         swiper = new Swiper(".swiper-container", {
-            loop: true,
-            slidesPerView: "auto",
-            spaceBetween: 30,
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-            },
-            scrollbar: {
-                el: ".swiper-scrollbar",
-            },
+          loop: true,
+          slidesPerView: "auto",
+          spaceBetween: 30,
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+          scrollbar: {
+            el: ".swiper-scrollbar",
+          },
         });
 
-        // Log the default active image ID after initialization
+        // حفظ معلومات الصورة الافتراضية عند تحميل الصفحة
         const activeImg = swiper.slides[swiper.activeIndex].querySelector("img");
-        if (activeImg) {
-            console.log("Default Image ID: " + activeImg.dataset.id);
-            document.getElementById("hiddenImgID").value = activeImg.dataset.id;
-        }
+        
 
         swiper.on("slideChangeTransitionEnd", function () {
-            const activeImg = swiper.slides[swiper.activeIndex].querySelector("img");
-            const imgID = document.getElementById("hiddenImgID");
+          const activeImg = swiper.slides[swiper.activeIndex].querySelector("img");
+          const imgID = document.getElementById("hiddenImgID");
 
-            const currentImageId = activeImg.dataset.id;
-
-            if (currentImageId !== lastImageId) {
-                console.log("Image ID: " + currentImageId);
-                lastImageId = currentImageId;
-
-                imgID.value = lastImageId;
-                console.log("Value: " + imgID.value);
-            }
+          const currentImageId = activeImg.dataset.id;
+          if (activeImg) {
+          document.getElementById("hiddenImgID").value = activeImg.dataset.id;
+          }
         });
-    }
-    
-    function generateButtons(occasions) {
-        console.log("Generating buttons...");
+        
+      }
+      
+      function generateButtons(occasions) {
         const buttonContainer = document.getElementById("buttonContainer");
         buttonContainer.innerHTML = "";
-        occasions.forEach((occasion) => {
-            const button = document.createElement("button");
+        occasions.forEach((occasion, index) => {
+          const button = document.createElement("button");
+          // تخصيص المناسبة الافتراضية لانها كلاس مختلف وتصميم مختلف
+          if (index === 0) {
             button.className = "btn btn-primary occasionButton";
+              button.innerHTML = `
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 20">
+                    <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+                  </svg> ${occasion.name}`;
+          } else {
+            button.className = "btn btn-outline-primary occasionButton";
             button.textContent = occasion.name;
-            button.dataset.id = occasion.id;
-            button.addEventListener("click", function () {
-                const url = `${proxyUrl}https://erp.maknon.org.sa/gcard/init?occasions=${this.dataset.id}`;
-                console.log("Attempting to send data to:", url);
-                fetch(url, {
-                    method: "GET",
-                    headers: {},
-                })
-                    .then((response) => {
-                        console.log("Raw response:", response);
-                        if (!response.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log("Response data:", data);
-                        generateImages(data.images);
-                        // Generate notes for the selected occasion
-                        if (data.images && data.images.length > 0) {
-                            const selectedOccasion = occasions.find(o => o.id == occasion.id);
-                            generateNotes(selectedOccasion.note_ids);
-                        } else {
-                            // Clear notes if no images
-                            clearNotes();
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error sending data:", error);
-                    });
+          }
+          button.dataset.id = occasion.id;
+          button.addEventListener("click", function () {
+            // تغيير جميع الازرار الى btn-outline-primary
+            document.querySelectorAll('.occasionButton').forEach(btn => {
+              btn.classList.remove('btn-primary');
+              btn.classList.add('btn-outline-primary');
+              if (btn.querySelector('svg')) {
+                btn.innerHTML = btn.innerHTML.replace(/<svg[\s\S]*<\/svg>/, ''); // حذف SVG 
+              }
             });
-            buttonContainer.appendChild(button);
-        });
-    }
 
-    function generateNotes(note_ids) {
-        console.log("Generating notes...");
+            // اضافة btn-primary للزر المختار
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+
+            // اعادة اضافة SVG للمناسبة الافتراضية
+            const firstButton = document.querySelector('.occasionButton');
+            firstButton.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 20">
+                <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+              </svg> ${firstButton.textContent.trim()}`;
+
+              const url = `${apiUrl}?occasions=${this.dataset.id}`;
+              fetch(url, {
+                  method: "GET",
+                  headers: {},
+              })
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error("Network response was not ok");
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  generateImages(data.images);
+                  // توليد النوتس للمناسبة المختارة
+                  if (data.images && data.images.length > 0) {
+                      const selectedOccasion = occasions.find(o => o.id == occasion.id);
+                      generateNotes(selectedOccasion.note_ids);
+                  } else {
+                      // حذف النوتس في حال لا يوجد صور 
+                      clearNotes();
+                  }
+              })
+              .catch((error) => {
+                  console.error("Error sending data:", error);
+              });
+          });
+          buttonContainer.appendChild(button);
+        });
+      }
+
+
+      function generateNotes(note_ids) {
         const noteSwiper = document.querySelector(".notes");
-        noteSwiper.innerHTML = ""; // Clear existing notes if any
+        noteSwiper.innerHTML = ""; // حذف النوتس الحالية اذا تواجدت
 
         note_ids.forEach((note) => {
-            // Create the radio button input
-            const radioInput = document.createElement("input");
-            radioInput.type = "radio";
-            radioInput.className = "btn-check";
-            radioInput.id = "note-" + note.id; // Ensure unique IDs
-            radioInput.name = "noteOptions"; // Same name groups them into a radio button set
-            radioInput.value = note.id;
-            radioInput.autocomplete = "off";
+          // انشاء ريديو للنوتس
+          const radioInput = document.createElement("input");
+          radioInput.type = "radio";
+          radioInput.className = "btn-check";
+          radioInput.id = "note-" + note.id; // ID فريد
+          radioInput.name = "note_id"; // نفس الاسم يضعهم في قروب 
+          radioInput.value = note.id;
+          radioInput.autocomplete = "off";
 
-            // Create the label for the radio button
-            const label = document.createElement("label");
-            label.className = "btn btn-outline-success mx-3 my-3";
-            label.htmlFor = radioInput.id; // Ensures clicking label toggles the input
-            label.textContent = note.name;
-            label.dataset.id = note.id;
+          // انشاء الlabel للريديو 
+          const label = document.createElement("label");
+          label.className = "btn btn-outline-success mx-3 my-3";
+          label.htmlFor = radioInput.id; // التاكد من الضغط عليها يشغل الانبوت
+          label.textContent = note.name;
+          label.dataset.id = note.id;
 
-            // Add event listener for selection, if needed
-            label.addEventListener("click", () => {
-                document
-                  .querySelectorAll(".notes .btn")
-                  .forEach((btn) => btn.classList.remove("selected"));
-                label.classList.add("selected");
-            });
+          // في حال كان هناك حاجة ل ايفنت
+          label.addEventListener("click", () => {
+            document
+              .querySelectorAll(".notes .btn")
+              .forEach((btn) => btn.classList.remove("selected"));
+            label.classList.add("selected");
+          });
 
-            label.onclick = function () {
-                document.querySelectorAll(".notes-container .notes");
-                console.log("Selected Note ID:", this.dataset.id);
-            };
+          label.onclick = function () {
+            document.querySelectorAll(".notes-container .notes");
+          };
 
-            // Append the input and label to the container
-            noteSwiper.appendChild(radioInput);
-            noteSwiper.appendChild(label);
+          // تطبيق الكود في الكونتينر المظلوب
+          noteSwiper.appendChild(radioInput);
+          noteSwiper.appendChild(label);
         });
-    }
+      } 
 
-    function clearNotes() {
-        console.log("Clearing notes...");
+      function clearNotes() {
         const noteSwiper = document.querySelector(".notes");
-        noteSwiper.innerHTML = ""; // Clear existing notes if any
-    }
-    
-    function generateSubmitButton() {
-        console.log("Generating submit button...");
+        noteSwiper.innerHTML = ""; // حذف النوتس الحالية
+      }
+      
+      function generateSubmitButton() {
         const nameInput = document.querySelector(".nameInputField");
         nameInput.innerHTML = "";
         const inputField = document.createElement("input");
@@ -445,52 +517,42 @@ document.getElementById(“title”).innerText = “Error loading data”;
         inputField.name = "name";
         inputField.className = "form-control text-center";
         inputField.ariaDescription = "nameHelpInline";
+        inputField.required = true;
 
         const subBtn = document.querySelector(".submitButton");
         subBtn.innerHTML = "";
-        const subBtnCreate = document.createElement("button"); // <button class="btn btn-primary" type="submit">Submit form</button>
-        subBtnCreate.className = "form-control btn btn-primary btn-lg col";
+        const subBtnCreate = document.createElement("button"); 
+        subBtnCreate.className = "form-control btn btn-success btn-lg col";
         subBtnCreate.type = "submit";
         subBtnCreate.value = "Submit";
         subBtnCreate.textContent = "أنشئ بطاقتك";
 
         nameInput.appendChild(inputField);
         subBtn.append(subBtnCreate);
-    }
-
-    document.querySelectorAll(".notes-selection .notes").forEach((note) => {
+      }
+      document.querySelectorAll(".notes-selection .notes").forEach((note) => {
         note.addEventListener("click", function () {
-            document
-              .querySelectorAll(".notes-selection .note")
-              .forEach((note) => note.classList.remove("selected"));
-            this.classList.add("selected");
-            document.getElementById("selectedNote").value =
-              this.getAttribute("data-value");
+          document
+            .querySelectorAll(".notes-selection .note")
+            .forEach((note) => note.classList.remove("selected"));
+          this.classList.add("selected");
+          document.getElementById("selectedNote").value =
+            this.getAttribute("data-value");
         });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        console.log("DOM content loaded...");
+      });
+      document.addEventListener("DOMContentLoaded", function () {
         const buttons = document.querySelectorAll(".occasionButton");
 
         buttons.forEach((button) => {
-            button.addEventListener("click", function () {
-                // Remove active class from all buttons
-                buttons.forEach((btn) => btn.classList.remove("active"));
+          button.addEventListener("click", function () {
+            // حذف كلاس اكتيف من جميع الازرار
+            buttons.forEach((btn) => btn.classList.remove("active"));
 
-                // Add active class to the clicked button
-                this.classList.add("active");
-            });
+            // اضافة كلاس اكتيف للزر المختار
+            this.classList.add("active");
+          });
         });
-    });
-
-    // Function to update the placeholder text
-    function updatePlaceholder() {
-        const inputField = document.getElementById("inputName");
-        const placeholder = document.getElementById("placeholder");
-        placeholder.textContent = inputField.value;
-    }
-</script>
-
-</body>
+      });
+    </script>
+  </body>
 </html>
